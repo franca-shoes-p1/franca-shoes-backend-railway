@@ -23,7 +23,7 @@ exports.criar = async (req, res) => {
       data_criacao: new Date().toISOString()
     };
 
-    // Salvar no Supabase
+    // SALVAR NO SUPABASE
     const { data: pedidoCriado, error } = await supabase
       .from('pedidos')
       .insert([pedidoData])
@@ -31,10 +31,10 @@ exports.criar = async (req, res) => {
 
     if (error) throw error;
 
-    // ✅ DISPARAR TODOS OS 4 BOTS AUTOMATICAMENTE
+    console.log('✅ Pedido salvo no banco:', pedidoCriado[0].id);
+
+    // ✅ DISPARAR BOTS AQUI
     try {
-      console.log('🤖 Iniciando 4 bots...');
-      
       const clienteData = {
         nome: nome,
         email: email,
@@ -42,23 +42,25 @@ exports.criar = async (req, res) => {
         endereco: endereco
       };
 
+      console.log('🤖 Chamando bots...');
       await dispararTodosBots(pedidoCriado[0], clienteData);
-      console.log('✅ Bots disparados com sucesso!');
+      console.log('✅ Bots disparados!');
     } catch (botError) {
-      console.error('⚠️ Erro ao disparar bots:', botError);
-      // Continuar mesmo se bots falharem
+      console.error('⚠️ Erro bots:', botError.message);
     }
 
-    res.json({
+    return res.json({
       status: 'sucesso',
       pedido: pedidoCriado[0],
       mensagem: 'Pedido criado e bots acionados!'
     });
+
   } catch (erro) {
     console.error('Erro ao criar pedido:', erro);
-    res.status(500).json({ erro: 'Erro ao criar pedido' });
+    return res.status(500).json({ erro: 'Erro ao criar pedido' });
   }
 };
+
 exports.listar = (req, res) => {
   res.json({ pedidos: [] });
 };
@@ -68,9 +70,9 @@ exports.obterPorId = (req, res) => {
 };
 
 exports.cancelar = (req, res) => {
-  res.json({ message: 'Pedido cancelado', id: req.params.id });
+  res.json({ mensagem: 'Pedido cancelado', id: req.params.id });
 };
 
 exports.atualizarStatus = (req, res) => {
-  res.json({ message: 'Status atualizado', id: req.params.id });
+  res.json({ mensagem: 'Status atualizado', id: req.params.id });
 };
