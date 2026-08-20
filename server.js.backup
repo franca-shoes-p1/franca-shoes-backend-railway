@@ -1,0 +1,32 @@
+﻿const express = require('express');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const emailRoutes = require('./routes/emailRoutes');
+const instagramYoutubeRoutes = require('./routes/instagramYoutubeRoutes');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/email', emailRoutes);
+app.use('/api/social', instagramYoutubeRoutes);
+
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'online',
+    server: 'Franca Shoes Backend',
+    bots: ['P6.1-WhatsApp', 'P6.2-Email', 'P6.3-Instagram', 'P6.4-YouTube'],
+    timestamp: new Date()
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(\n✅ P6.2 - Email Bot online);
+  console.log(✅ P6.3 - Instagram Bot online);
+  console.log(✅ P6.4 - YouTube Bot online);
+  console.log(\n🚀 Servidor rodando em http://localhost:\n);
+});
